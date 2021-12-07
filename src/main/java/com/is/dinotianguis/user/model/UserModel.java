@@ -47,6 +47,12 @@ public class UserModel implements Serializable
     {
     }
 
+    public UserModel(String UID, String password)
+    {
+        this.UID = UID;
+        this.password = password;
+    }
+
     public UserModel(Long id, String UID, String password, Set<Rol> roles)
     {
         this.id = id;

@@ -31,7 +31,7 @@ public class JwtProvider
                 .compact();
     }
 
-    public String getUidFromToken(String token)
+    public String getUIDFromToken(String token)
     {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
     }
