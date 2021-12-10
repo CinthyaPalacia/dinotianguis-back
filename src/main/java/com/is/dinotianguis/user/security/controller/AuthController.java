@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -62,14 +63,13 @@ public class AuthController
 
         final UserModel user = new UserModel(form.getEmail(), passwordEncoder.encode(form.getPassword()));
         Set<Rol> roles = new HashSet<>();
-        Rol customerRol = rolService.getByRolName(RolName.ROLE_CUSTOMER)
-                .orElse(createRol(RolName.ROLE_CUSTOMER));
-        roles.add(customerRol);
+        Optional<Rol> customerRol = rolService.getByRolName(RolName.ROLE_CUSTOMER);
+        roles.add(customerRol.get());
         user.setRoles(roles);
         user.setAccountNonExpired(Boolean.TRUE);
         user.setAccountNonLocked(Boolean.TRUE);
         user.setCredentialsNonExpired(Boolean.TRUE);
-        user.setEnabled(Boolean.FALSE);
+        user.setEnabled(Boolean.TRUE);
         userService.save(user);
         return new ResponseEntity(new Message("usuario guardado"), HttpStatus.CREATED);
     }
@@ -88,12 +88,5 @@ public class AuthController
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         JwtDto jwtDto = new JwtDto(jwt, userDetails.getUsername(), userDetails.getAuthorities());
         return new ResponseEntity(jwtDto, HttpStatus.OK);
-    }
-
-    private Rol createRol(RolName rolName)
-    {
-        Rol rol = new Rol(rolName);
-        rolService.save(rol);
-        return rol;
     }
 }
