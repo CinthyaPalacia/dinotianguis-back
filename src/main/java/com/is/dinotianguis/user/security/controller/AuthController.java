@@ -12,6 +12,7 @@ import com.is.dinotianguis.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -89,4 +90,12 @@ public class AuthController
         JwtDto jwtDto = new JwtDto(jwt, userDetails.getUsername(), userDetails.getAuthorities());
         return new ResponseEntity(jwtDto, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @GetMapping("/prueba/{mynumber}")
+    public ResponseEntity<?> prueba(@PathVariable("mynumber") int mynumber)
+    {
+        return new ResponseEntity(new Message("El numero ingresado es " + mynumber), HttpStatus.OK);
+    }
+
 }
