@@ -4,15 +4,17 @@ import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorValue("user")
+@DiscriminatorColumn(name = "type")
 public class UserModel implements Serializable
 {
 
-    private static final long serialVersionUID = 1L;
+    private static final Long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,11 +27,10 @@ public class UserModel implements Serializable
     @Column(name = "password", nullable = false)
     private String password;
 
-    @NotNull
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "rol_user", joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "rol_id"))
-    private Set<Rol> roles = new HashSet<>();
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "rol_id", referencedColumnName = "id"))
+    private Set<Rol> roles = new java.util.LinkedHashSet<>();
 
     @Column(name = "account_non_expired")
     private boolean accountNonExpired;
