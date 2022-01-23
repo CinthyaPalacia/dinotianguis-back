@@ -1,5 +1,8 @@
 package com.is.dinotianguis.user.security.controller;
 
+import com.is.dinotianguis.commerce.base.model.cart.CartModel;
+import com.is.dinotianguis.commerce.base.model.customer.CustomerModel;
+import com.is.dinotianguis.commerce.base.service.DefaultUserService;
 import com.is.dinotianguis.user.enums.RolName;
 import com.is.dinotianguis.user.model.Rol;
 import com.is.dinotianguis.user.model.UserModel;
@@ -8,7 +11,6 @@ import com.is.dinotianguis.user.security.dto.Message;
 import com.is.dinotianguis.user.security.dto.AuthForm;
 import com.is.dinotianguis.user.security.jwt.JwtProvider;
 import com.is.dinotianguis.user.service.RolService;
-import com.is.dinotianguis.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +42,7 @@ public class AuthController
      AuthenticationManager authenticationManager;
 
     @Autowired
-    UserService userService;
+    DefaultUserService userService;
 
     @Autowired
     RolService rolService;
@@ -54,15 +56,15 @@ public class AuthController
 
         if(bindingResult.hasErrors())
         {
-            return new ResponseEntity(new Message("datos incorrectos"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new Message("Datos incorrectos"), HttpStatus.BAD_REQUEST);
         }
 
         if(userService.existsByUID(form.getEmail()))
         {
-            return new ResponseEntity(new Message("ese usuario ya existe"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new Message("El usuario ya existe"), HttpStatus.BAD_REQUEST);
         }
 
-        final UserModel user = new UserModel(form.getEmail(), passwordEncoder.encode(form.getPassword()));
+        final CustomerModel user = new CustomerModel(form.getEmail(), passwordEncoder.encode(form.getPassword()));
         Set<Rol> roles = new HashSet<>();
         Optional<Rol> customerRol = rolService.getByRolName(RolName.ROLE_CUSTOMER);
         roles.add(customerRol.get());
@@ -72,7 +74,7 @@ public class AuthController
         user.setCredentialsNonExpired(Boolean.TRUE);
         user.setEnabled(Boolean.TRUE);
         userService.save(user);
-        return new ResponseEntity(new Message("usuario guardado"), HttpStatus.CREATED);
+        return new ResponseEntity(new Message("Usuario guardado"), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
@@ -92,10 +94,12 @@ public class AuthController
     }
 
     @PreAuthorize("hasRole('CUSTOMER')")
-    @GetMapping("/prueba/{mynumber}")
-    public ResponseEntity<?> prueba(@PathVariable("mynumber") int mynumber)
+    @GetMapping("/prueba")
+    public ResponseEntity<?> prueba()
     {
-        return new ResponseEntity(new Message("El numero ingresado es " + mynumber), HttpStatus.OK);
+        UserModel user = userService.getCurrentUser().orElseThrow();
+        CartModel cart = new CartModel();
+        return new ResponseEntity(new Message("El usuario ingresado es "+ user.getClass().getName()), HttpStatus.OK);
     }
 
 }
