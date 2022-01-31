@@ -14,6 +14,11 @@ public class CategoryService
     @Autowired
     private CategoryModelRepository categoryRepository;
 
+    public Optional<CategoryModel> findById(final Long id)
+    {
+        return categoryRepository.findById(id);
+    }
+
     public Optional<CategoryModel> findByName(final String name)
     {
         return categoryRepository.findByName(name);

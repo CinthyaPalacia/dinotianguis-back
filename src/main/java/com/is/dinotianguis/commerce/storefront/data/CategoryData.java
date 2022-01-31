@@ -1,14 +1,14 @@
-package com.is.dinotianguis.commerce.storefront.dto;
+package com.is.dinotianguis.commerce.storefront.data;
 
 import java.util.List;
 
-public class CategoryMenuDTO
+public class CategoryData
 {
     private Long id;
     private String name;
-    private List<CategoryMenuDTO> categories;
+    private List<CategoryData> categories;
 
-    public CategoryMenuDTO(final Long id, final String name)
+    public CategoryData(final Long id, final String name)
     {
         this.id = id;
         this.name = name;
@@ -34,12 +34,12 @@ public class CategoryMenuDTO
         this.name = name;
     }
 
-    public List<CategoryMenuDTO> getCategories()
+    public List<CategoryData> getCategories()
     {
         return categories;
     }
 
-    public void setCategories(List<CategoryMenuDTO> categories)
+    public void setCategories(List<CategoryData> categories)
     {
         this.categories = categories;
     }

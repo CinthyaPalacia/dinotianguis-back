@@ -7,7 +7,6 @@ import com.is.dinotianguis.commerce.base.model.seller.StoreModel;
 import com.is.dinotianguis.commerce.base.service.CategoryService;
 import com.is.dinotianguis.commerce.base.service.DefaultUserService;
 import com.is.dinotianguis.commerce.base.service.ProductService;
-import com.is.dinotianguis.commerce.storefront.dto.CategoryMenuDTO;
 import com.is.dinotianguis.user.enums.RolName;
 import com.is.dinotianguis.user.model.Rol;
 import com.is.dinotianguis.user.model.UserModel;
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +27,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/initial")
@@ -55,25 +52,6 @@ public class InitialDataController
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/categories")
-    public ResponseEntity<?> getCategories()
-    {
-        List<CategoryMenuDTO> categoryMenuDTOS = categoryService
-                .findForMenu().stream()
-                .map(c -> convertCategory(c)).collect(Collectors.toList());
-        return new ResponseEntity(categoryMenuDTOS, HttpStatus.OK);
-    }
-
-    private CategoryMenuDTO convertCategory(CategoryModel categoryModel)
-    {
-        CategoryMenuDTO categoryMenuDTO = new CategoryMenuDTO(categoryModel.getId(), categoryModel.getName());
-        categoryMenuDTO.setCategories(new ArrayList<>());
-        if (!CollectionUtils.isEmpty(categoryModel.getCategories()))
-        {
-            categoryMenuDTO.setCategories(categoryModel.getCategories().stream().map(c -> convertCategory(c)).collect(Collectors.toList()));
-        }
-        return categoryMenuDTO;
-    }
 
     @GetMapping("/create")
     public ResponseEntity<?> createCommerce()
